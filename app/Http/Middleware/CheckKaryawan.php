@@ -14,8 +14,23 @@ class CheckKaryawan
             return redirect()->route('login');
         }
 
-        if (!empty($perans) && !in_array(session('karyawan_peran'), $perans)) {
-            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        if (!empty($perans)) {
+            $peranUser = session('karyawan_peran');
+
+            // Pecah peran user jika double job (misal: pendaftaran_kasir)
+            $peranUserList = explode('_', $peranUser);
+
+            $bolehAkses = false;
+            foreach ($perans as $p) {
+                if (in_array($p, $peranUserList) || $peranUser === $p) {
+                    $bolehAkses = true;
+                    break;
+                }
+            }
+
+            if (!$bolehAkses) {
+                abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+            }
         }
 
         return $next($request);

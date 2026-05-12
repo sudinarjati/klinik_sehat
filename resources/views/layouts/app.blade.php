@@ -227,7 +227,9 @@
         <div class="navbar-right">
             <div style="text-align:right;">
                 <div class="user-name">{{ session('karyawan_nama') }}</div>
-                <div class="user-role">{{ ucfirst(session('karyawan_peran')) }}</div>
+                <div class="user-role">
+                    {{ session('karyawan_peran') === 'pendaftaran_kasir' ? 'Pendaftaran & Kasir' : ucfirst(session('karyawan_peran')) }}
+                </div>
             </div>
             <div style="width:34px; height:34px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>

@@ -3,14 +3,12 @@
 @section('title', 'Riwayat Pembayaran')
 
 @section('nav-links')
-    <li><a href="{{ route('kasir.index') }}" class="nav-link">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-        Pembayaran
-    </a></li>
-    <li><a href="{{ route('kasir.riwayat') }}" class="nav-link active">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Riwayat
-    </a></li>
+    @if(session('karyawan_peran') === 'pendaftaran_kasir')
+        @include('layouts.nav-pendaftaran-kasir')
+    @else
+        <li><a href="{{ route('kasir.index') }}" class="nav-link">Pembayaran</a></li>
+        <li><a href="{{ route('kasir.riwayat') }}" class="nav-link active">Riwayat</a></li>
+    @endif
 @endsection
 
 @section('content')

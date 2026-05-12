@@ -2,20 +2,24 @@
 
 @section('title', 'Pendaftaran Pasien')
 
-@section('nav-links')
-    <li><a href="{{ route('pendaftaran.index') }}" class="nav-link active">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Pendaftaran
-    </a></li>
-    <li><a href="{{ route('pendaftaran.pasien') }}" class="nav-link">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-        Data Pasien
-    </a></li>
-    <li><a href="{{ route('pendaftaran.riwayat') }}" class="nav-link">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Riwayat
-    </a></li>
-@endsection
+            @section('nav-links')
+                @if(session('karyawan_peran') === 'pendaftaran_kasir')
+                    @include('layouts.nav-pendaftaran-kasir')
+                @else
+                    <li><a href="{{ route('pendaftaran.index') }}" class="nav-link active">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                        Pendaftaran
+                    </a></li>
+                    <li><a href="{{ route('pendaftaran.pasien') }}" class="nav-link">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                        Data Pasien
+                    </a></li>
+                    <li><a href="{{ route('pendaftaran.riwayat') }}" class="nav-link">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Riwayat
+                    </a></li>
+                @endif
+            @endsection
 
 @section('content')
 <div class="page-header">
@@ -245,7 +249,14 @@
     function pilihPasien(p) {
         // Isi form dengan data pasien lama
         document.getElementById('f_nama').value = p.nama_lengkap;
-        document.getElementById('f_lahir').value = p.tanggal_lahir ?? '';
+        // Tanggal lahir — pastikan format YYYY-MM-DD
+        if (p.tanggal_lahir) {
+            // Jika sudah YYYY-MM-DD langsung pakai, jika tidak convert dulu
+            const tl = p.tanggal_lahir.split('T')[0]; // potong jika ada waktu
+            document.getElementById('f_lahir').value = tl;
+        } else {
+            document.getElementById('f_lahir').value = '';
+        }
         document.getElementById('f_kelamin').value = p.jenis_kelamin;
         document.getElementById('f_jenis_pasien').value = p.jenis_pasien ?? 'lokal';
         document.getElementById('f_hp').value = p.nomor_hp;

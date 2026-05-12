@@ -282,12 +282,16 @@
     const obatHarga     = @json($obatList->pluck('harga_jual', 'nama'));
 
     // Data obat untuk dropdown dinamis (disiapkan di controller)
-    const obatData      = {!! $obatJson !!};
-    const obatOptions = obatData.map(o =>
-        o.stok <= 0
-            ? `<option value="${o.nama}" data-harga="0" data-stok="0" disabled style="color:#999;">${o.nama} — STOK HABIS</option>`
-            : `<option value="${o.nama}" data-harga="${o.harga}" data-stok="${o.stok}">${o.nama}</option>`
-    ).join('');
+        const obatOptions = obatData.map(o => {
+            const label = o.isi_per_satuan > 1
+                ? `${o.nama} — per ${o.satuan_jual} (isi ${o.isi_per_satuan} ${o.satuan})`
+                : `${o.nama} — per ${o.satuan_jual}`;
+            const disabled = o.stok <= 0 ? 'disabled' : '';
+            const habis    = o.stok <= 0 ? ' — STOK HABIS' : '';
+            return `<option value="${o.nama}" data-harga="${o.harga}"
+                data-satuan="${o.satuan_jual}" data-isi="${o.isi_per_satuan}"
+                ${disabled}>${label}${habis}</option>`;
+        }).join('');
 
     let resepCount = {{ !empty($pemeriksaan->resep_obat) ? count($pemeriksaan->resep_obat) : 0 }};
 
@@ -369,24 +373,23 @@
 
         const html = `
         <div class="resep-item" id="resep_${id}">
-            <button type="button" class="btn-remove-resep" onclick="hapusObat(${id})">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-            </button>
+            <button type="button" class="btn-remove-resep" onclick="hapusObat(${id})">...</button>
             <div class="resep-grid">
                 <div class="form-group mb-0">
                     <label class="form-label">Obat</label>
-                    <select name="obat_nama[]" class="form-control" onchange="cekStokObat(this)">
+                    <select name="obat_nama[]" class="form-control" onchange="patchSatuanObat(this); cekStokObat(this)">
                         <option value="">Pilih obat</option>
                         ${obatOptions}
                     </select>
                 </div>
                 <div class="form-group mb-0">
-                    <label class="form-label">Jumlah</label>
+                    <label class="form-label">Jumlah <span id="satuanLabel_${id}" style="font-weight:400; color:var(--text-light);"></span></label>
                     <input type="number" name="obat_jumlah[]" class="form-control" value="1" min="1" onchange="hitungEstimasi()">
                 </div>
                 <div class="form-group mb-0">
                     <label class="form-label">Aturan Pakai</label>
-                    <input type="text" name="obat_aturan[]" class="form-control" placeholder="Contoh: 3x sehari 1 tablet sesudah makan">
+                    <input type="text" name="obat_aturan[]" class="form-control"
+                        placeholder="Contoh: 3x sehari 1 tablet sesudah makan">
                 </div>
             </div>
         </div>`;
@@ -394,6 +397,28 @@
         document.getElementById('resepContainer').insertAdjacentHTML('beforeend', html);
         hitungEstimasi();
     }
+
+    function patchSatuanObat(selectEl) {
+    const opt    = selectEl.options[selectEl.selectedIndex];
+    const satuan = opt?.getAttribute('data-satuan') ?? '';
+    const isi    = opt?.getAttribute('data-isi') ?? '1';
+
+    // Cari label satuan terdekat
+    const wrapper = selectEl.closest('.resep-item');
+    const label   = wrapper?.querySelector('[id^="satuanLabel_"]');
+    if (label) {
+        label.textContent = satuan
+            ? `(${satuan}${isi > 1 ? `, isi ${isi}` : ''})`
+            : '';
+    }
+    hitungEstimasi();
+}
+
+
+
+
+
+
 
     function hapusObat(id) {
         const el = document.getElementById('resep_' + id);

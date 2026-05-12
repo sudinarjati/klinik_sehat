@@ -200,6 +200,12 @@
                 Dashboard
             </a>
 
+            <div class="sidebar-label" style="margin-top:12px;">Manajemen Akun</div>
+            <a href="{{ route('admin.karyawan') }}" class="sidebar-link {{ request()->routeIs('admin.karyawan') ? 'active' : '' }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                Karyawan
+            </a>
+
             <div class="sidebar-label" style="margin-top:12px;">Harga & Layanan</div>
             <a href="{{ route('admin.tindakan') }}" class="sidebar-link {{ request()->routeIs('admin.tindakan') ? 'active' : '' }}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>

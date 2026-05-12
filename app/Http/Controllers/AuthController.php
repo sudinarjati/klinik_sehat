@@ -54,11 +54,12 @@ class AuthController extends Controller
         $peran = session('karyawan_peran');
 
         return match($peran) {
-            'pendaftaran' => redirect()->route('pendaftaran.index'),
-            'dokter'      => redirect()->route('dokter.index'),
-            'kasir'       => redirect()->route('kasir.index'),
-            'apoteker'    => redirect()->route('apoteker.index'),
-            default       => redirect()->route('login'),
+            'pendaftaran'          => redirect()->route('pendaftaran.index'),
+            'dokter'               => redirect()->route('dokter.index'),
+            'kasir'                => redirect()->route('kasir.index'),
+            'apoteker'             => redirect()->route('apoteker.index'),
+            'pendaftaran_kasir'    => redirect()->route('pendaftaran.index'),
+            default                => redirect()->route('login'),
         };
     }
 }   

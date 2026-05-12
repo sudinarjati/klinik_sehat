@@ -104,18 +104,34 @@ class PendaftaranController extends Controller
 
     public function cariPasien(Request $request)
     {
-        $q = $request->get('q');
+    $keyword = $request->q;
 
-        $pasiens = Antrian::whereNotNull('nomor_rm')
-        ->where(function ($query) use ($q) {
-            $query->where('nama_lengkap', 'like', "%{$q}%")
-                  ->orWhere('nomor_rm', 'like', "%{$q}%");
+    $results = Antrian::where(function($q) use ($keyword) {
+            $q->where('nama_lengkap', 'like', "%{$keyword}%")
+              ->orWhere('nomor_rm', 'like', "%{$keyword}%");
         })
-        ->orderBy('nomor_rm')
-        ->get()
+        ->whereNotNull('nomor_rm')
+        ->orderByRaw('CAST(nomor_rm AS UNSIGNED) DESC')
+        ->get(['id', 'nama_lengkap', 'nomor_rm', 'tanggal_lahir',
+               'jenis_kelamin', 'jenis_pasien', 'nomor_hp',
+               'nama_ibu_kandung', 'alamat'])
         ->unique('nomor_rm')
-        ->values();
+        ->values()
+        ->map(function($a) {
+            return [
+                'nama_lengkap'    => $a->nama_lengkap,
+                'nomor_rm'        => $a->nomor_rm,
+                'tanggal_lahir'   => $a->tanggal_lahir
+                                        ? $a->tanggal_lahir->format('Y-m-d')
+                                        : null,
+                'jenis_kelamin'   => $a->jenis_kelamin,
+                'jenis_pasien'    => $a->jenis_pasien,
+                'nomor_hp'        => $a->nomor_hp,
+                'nama_ibu_kandung'=> $a->nama_ibu_kandung,
+                'alamat'          => $a->alamat,
+            ];
+        });
 
-    return response()->json($pasiens);
+    return response()->json($results);
     }
 }

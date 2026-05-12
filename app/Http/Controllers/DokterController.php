@@ -51,15 +51,16 @@ class DokterController extends Controller
         $obatList = Obat::where('aktif', true)->orderBy('nama')->get();
 
         // Siapkan data untuk JavaScript
-        $obatJson = $obatList->map(function($o) {
-            return [
-                'nama'   => $o->nama,
-                'stok'   => $o->stok,
-                'satuan' => $o->satuan,
-                'harga'  => $o->harga_jual,
-            ];
-        })->values()->toJson();
-
+            $obatJson = $obatList->map(function($o) {
+                return [
+                    'nama'           => $o->nama,
+                    'stok'           => $o->stok,
+                    'satuan'         => $o->satuan,
+                    'satuan_jual'    => $o->satuan_jual,
+                    'isi_per_satuan' => $o->isi_per_satuan,
+                    'harga'          => $o->harga_jual,
+                ];
+            })->values()->toJson();
         return view('dokter.form', compact(
             'antrian', 'pemeriksaan', 'tindakanList', 'labList', 'obatList', 'obatJson'
         ));

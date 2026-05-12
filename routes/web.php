@@ -84,5 +84,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/alkes/{alkes}', [\App\Http\Controllers\Admin\AlkesController::class, 'update'])->name('alkes.update');
         Route::post('/alkes/{alkes}/stok', [\App\Http\Controllers\Admin\AlkesController::class, 'tambahStok'])->name('alkes.stok');
         Route::delete('/alkes/{alkes}', [\App\Http\Controllers\Admin\AlkesController::class, 'destroy'])->name('alkes.destroy');
+
+
+        // Karyawan
+        Route::get('/karyawan', [\App\Http\Controllers\Admin\KaryawanController::class, 'index'])->name('karyawan');
+        Route::post('/karyawan', [\App\Http\Controllers\Admin\KaryawanController::class, 'store'])->name('karyawan.store');
+        Route::put('/karyawan/{karyawan}', [\App\Http\Controllers\Admin\KaryawanController::class, 'update'])->name('karyawan.update');
+        Route::delete('/karyawan/{karyawan}', [\App\Http\Controllers\Admin\KaryawanController::class, 'destroy'])->name('karyawan.destroy');
     });
 });
